@@ -24,14 +24,9 @@ import cloneDeep from 'lodash/cloneDeep';
 import {
   AnswerGroup,
   AnswerGroupBackendDict,
-  AnswerGroupObjectFactory,
-} from 'domain/exploration/AnswerGroupObjectFactory';
+} from 'domain/exploration/answer-group.model';
 import {HintBackendDict, Hint} from 'domain/exploration/hint-object.model';
-import {
-  OutcomeBackendDict,
-  Outcome,
-  OutcomeObjectFactory,
-} from 'domain/exploration/OutcomeObjectFactory';
+import {OutcomeBackendDict, Outcome} from 'domain/exploration/outcome.model';
 import {
   SolutionBackendDict,
   Solution,
@@ -105,6 +100,7 @@ export class Interaction extends BaseTranslatableObject {
   solution: Solution | null;
   currentAnswer: InteractionAnswer | null = null;
   submitClicked = false;
+  answerIsValid = false;
   constructor(
     answerGroups: AnswerGroup[],
     confirmedUnclassifiedAnswers: readonly InteractionAnswer[],
@@ -309,9 +305,7 @@ export class Interaction extends BaseTranslatableObject {
 })
 export class InteractionObjectFactory {
   constructor(
-    private answerGroupFactory: AnswerGroupObjectFactory,
     private solutionFactory: SolutionObjectFactory,
-    private outcomeFactory: OutcomeObjectFactory,
     private subtitledUnicodeFactory: SubtitledUnicodeObjectFactory
   ) {}
 
@@ -562,7 +556,7 @@ export class InteractionObjectFactory {
     interactionId: string
   ): AnswerGroup[] {
     return answerGroupBackendDicts.map(answerGroupBackendDict => {
-      return this.answerGroupFactory.createFromBackendDict(
+      return AnswerGroup.createFromBackendDict(
         answerGroupBackendDict,
         interactionId
       );
@@ -580,7 +574,7 @@ export class InteractionObjectFactory {
   createOutcomeFromBackendDict(
     outcomeBackendDict: OutcomeBackendDict
   ): Outcome {
-    return this.outcomeFactory.createFromBackendDict(outcomeBackendDict);
+    return Outcome.createFromBackendDict(outcomeBackendDict);
   }
 
   createSolutionFromBackendDict(
